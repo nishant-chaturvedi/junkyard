@@ -3,12 +3,8 @@
     const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
     const JUNK_ITEMS = ["Acoustic Guitar", "Ashtray", "Baseball", "Baseball Glove", "Bent Tin Can*", "Bonesaw", "Butter Knife", "Camera", "Carton of Cigarettes (Used in Dead Money)", "Chessboard", "Cigarette", "Clipboard", "Coffee Mug", "Coffee Pot", "Conductor", "Counterfeit Bottle Caps", "Crutch", "Cue Ball", "Cup", "Damaged Garden Gnome", "Dinner Plate", "Dog Bowl", "Drinking Glass", "Earnings Clipboard", "Empty Nuka-Cola Bottle", "Empty Sunset Sarsaparilla Bottle", "Empty Whiskey Bottles", "Evil Gnome", "Finance Clipboard", "Firehose Nozzle", "Food Sanitizer", "Fork", "Glass Pitcher", "Green Plate", "Hammer", "Harmonica", "Hot Plate", "Intact Garden Gnome", "Iron", "Large Burned Book", "Large Destroyed Book", "Large Ruined Book", "Large Scorched Book", "Large Whiskey Bottle", "Lawn Mower Blade", "Leaf Blower", "Medical Clipboard", "Metal Cooking Pan", "Metal Cooking Pot", "Metal Spoon"];
 
-    const NETWORK_IDENTIFIER = "1513251837780";
-    const JUNK_YARD_OWNER = "0xa6794b2ccf876aaa9f297fd315ac0f9c66c7d4d4";
-    const MY_ADDRESS = "0x890942da1a8c3c52370eb2e3244c74a57b81957c";
-    
-
-    let contractAddress;
+    const NETWORK_IDENTIFIER = "1513255990079";
+    let junkYardOwner, myAddress, contractAddress;
 
     let app = {
         junkyard: null,
@@ -29,7 +25,7 @@
                 .then(contractMata => {
                     contractAddress = contractMata.address;
                     let contract = new web3.eth.Contract(contractMata.abi, contractMata.address, {
-                        from: MY_ADDRESS
+                        from: myAddress
                     });
                     this.junkyard = contract;
                     return contract;
@@ -45,7 +41,7 @@
         dumpInJunkyard: function (itemId, itemValue) {
             return this.junkyard.methods.dump(itemId, itemValue)
                 .send({
-                    from: JUNK_YARD_OWNER,
+                    from: junkYardOwner,
                     gas: 500000
                 });
         },
@@ -65,7 +61,7 @@
         buy: function (itemId, value) {
             return app.junkyard.methods.buy(itemId)
                 .send({
-                    from: MY_ADDRESS,
+                    from: myAddress,
                     to: contractAddress,
                     value: value
                 });
@@ -150,8 +146,8 @@
                 let template = document.querySelector("#template-balances").innerHTML;
 
                 return accountBalances.map(accountBalance => {
-                    return template.replace(/{{account}}/, accountBalance.account).replace(/{{balance}}/, accountBalance.balance).replace(/{{class-name}}/, function(className){
-                        if(accountBalance.account.toLowerCase() === MY_ADDRESS.toLowerCase())
+                    return template.replace(/{{account}}/, accountBalance.account).replace(/{{balance}}/, accountBalance.balance).replace(/{{class-name}}/, function (className) {
+                        if (accountBalance.account.toLowerCase() === myAddress.toLowerCase())
                             return "text-danger";
                         else
                             return "text-primary";
@@ -181,12 +177,32 @@
     }
 
     window.onload = function () {
-        app.initContract()
-            .then(seed)
-            .then(refreshUI)
-            .then(displayAccountBalances)
-            .then(wireUpBuyNow)
-            .catch(err => console.log(err))
+        let state = sessionStorage.getItem("junkYard");
+        if (state) {
+            state = JSON.parse(state);
+            junkYardOwner = state.junkYardOwner;
+        }
+
+        if ((junkYardOwner || (junkYardOwner = prompt("Enter JunkYard Owner Address")))
+            && (myAddress = prompt("Enter Your Address"))) {
+
+            sessionStorage.setItem("junkYard", JSON.stringify({
+                junkYardOwner
+            }));
+            
+            console.log("junkyard owner is", junkYardOwner);
+            console.log("Your address is", myAddress);
+
+            document.querySelector("#jyowner").innerHTML = `JunkYard Owner: ${junkYardOwner}`;
+            document.querySelector("#myaddress").innerHTML = `My Address: ${myAddress}`;
+
+            app.initContract()
+                .then(seed)
+                .then(refreshUI)
+                .then(displayAccountBalances)
+                .then(wireUpBuyNow)
+                .catch(err => console.log(err))
+        }
     }
 
 })();
