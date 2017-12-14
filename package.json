@@ -11,7 +11,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node ./src/server.js"
+    "start": "node ./src/server.js",
+    "build": "rm -rf ./build && truffle compile && truffle migrate --reset"
   },
   "keywords": [],
   "author": "",

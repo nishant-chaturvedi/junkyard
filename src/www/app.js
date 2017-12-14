@@ -1,9 +1,13 @@
 (function () {
 
-    let web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-    const JUNK_ITEMS = ["10 Ball", "13 Ball", "2 Ball", "5 Ball", "8 Ball", "Acoustic Guitar (Unique Item)", "Ashtray", "Baseball", "Baseball Glove", "Bent Tin Can*", "Bonesaw", "Butter Knife", "Camera", "Carton of Cigarettes (Used in Dead Money)", "Chessboard", "Cigarette", "Clipboard", "Coffee Mug", "Coffee Pot", "Conductor", "Counterfeit Bottle Caps", "Crutch", "Cue Ball", "Cup", "Damaged Garden Gnome", "Dinner Plate", "Dog Bowl", "Drinking Glass", "Earnings Clipboard", "Empty Nuka-Cola Bottle", "Empty Sunset Sarsaparilla Bottle", "Empty Whiskey Bottles", "Evil Gnome", "Finance Clipboard", "Firehose Nozzle", "Food Sanitizer", "Fork", "Glass Pitcher", "Green Plate", "Hammer", "Harmonica", "Hot Plate", "Intact Garden Gnome", "Iron", "Large Burned Book", "Large Destroyed Book", "Large Ruined Book", "Large Scorched Book", "Large Whiskey Bottle", "Lawn Mower Blade", "Leaf Blower", "Medical Clipboard", "Metal Cooking Pan", "Metal Cooking Pot", "Metal Spoon", "Milk Bottle", "Motorcycle Gas Tank", "Motorcycle Handbrake", "Ophthalmoscope", "Pack of Cigarettes", "Paint Gun", "Paperweight", "Pencil", "Plunger", "Pre-War Book", "Pre-war Money", "Rake", "Red Plate", "Scissors", "Sheet Music Book (Unique Item)", "Shot glass", "Small Burned Book", "Small Destroyed Book", "Small Ruined Book", "Small Scorched Book", "Spatula", "Steam Guage Assembly*", "Sunset Sarsaparilla Deputy Badge*", "Teddy Bear", "Tin Plate", "Toaster", "Toy Car", "Triangle", "Tweezers", "Vacuum Cleaner", "Whet Stone", "White Plate", "Wood Chipper"];
-    const NETWORK_IDENTIFIER = "1513193707639";
-    const MY_ADDRESS = "0xba723bae5b6427766152777a28739db0df1bc45f";
+    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    const JUNK_ITEMS = ["Acoustic Guitar", "Ashtray", "Baseball", "Baseball Glove", "Bent Tin Can*", "Bonesaw", "Butter Knife", "Camera", "Carton of Cigarettes (Used in Dead Money)", "Chessboard", "Cigarette", "Clipboard", "Coffee Mug", "Coffee Pot", "Conductor", "Counterfeit Bottle Caps", "Crutch", "Cue Ball", "Cup", "Damaged Garden Gnome", "Dinner Plate", "Dog Bowl", "Drinking Glass", "Earnings Clipboard", "Empty Nuka-Cola Bottle", "Empty Sunset Sarsaparilla Bottle", "Empty Whiskey Bottles", "Evil Gnome", "Finance Clipboard", "Firehose Nozzle", "Food Sanitizer", "Fork", "Glass Pitcher", "Green Plate", "Hammer", "Harmonica", "Hot Plate", "Intact Garden Gnome", "Iron", "Large Burned Book", "Large Destroyed Book", "Large Ruined Book", "Large Scorched Book", "Large Whiskey Bottle", "Lawn Mower Blade", "Leaf Blower", "Medical Clipboard", "Metal Cooking Pan", "Metal Cooking Pot", "Metal Spoon"];
+
+    const NETWORK_IDENTIFIER = "1513251837780";
+    const JUNK_YARD_OWNER = "0xa6794b2ccf876aaa9f297fd315ac0f9c66c7d4d4";
+    const MY_ADDRESS = "0x890942da1a8c3c52370eb2e3244c74a57b81957c";
+    
+
     let contractAddress;
 
     let app = {
@@ -41,7 +45,7 @@
         dumpInJunkyard: function (itemId, itemValue) {
             return this.junkyard.methods.dump(itemId, itemValue)
                 .send({
-                    from: MY_ADDRESS,
+                    from: JUNK_YARD_OWNER,
                     gas: 500000
                 });
         },
@@ -64,10 +68,6 @@
                     from: MY_ADDRESS,
                     to: contractAddress,
                     value: value
-                })
-                .then(res => {
-                    console.log(res)
-                    return res;
                 });
         }
     }
@@ -77,15 +77,13 @@
             .then(items => {
                 if (items > 0) {
                     console.log("skipping seed, total items:", items);
-                    throw `seed not needed`;
+                    return;
                 }
-                return items;
-            })
-            .then((items) => {
+
                 let numToSeed = JUNK_ITEMS.length;
                 let dumpedItemsPromises = [];
                 for (let i = 1; i <= numToSeed; i++) {
-                    dumpedItemsPromises.push(app.dumpInJunkyard(i, Math.ceil(Math.random() * 10000))
+                    dumpedItemsPromises.push(app.dumpInJunkyard(i, Math.ceil(Math.random() * 100000))
                         .then((res) => {
                             console.log("inserted", res)
                         })
@@ -93,7 +91,7 @@
                 }
                 return Promise.all(dumpedItemsPromises);
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
     }
 
     function getBalance(address) {
@@ -119,22 +117,75 @@
                 return items.map((item, index) => Object.assign({}, item, { title: JUNK_ITEMS[index] }));
             })
             .then(items => {
-                console.log("following are the retrieved items", items);
                 return items;
             })
+            .then(items => {
+                let template = document.querySelector("#template-items").innerHTML;
+
+                return items.map(item => {
+                    let content = template.replace(/{{title}}/, item.title)
+                        .replace(/{{value}}/g, item.value)
+                        .replace(/{{owner}}/, item.owner)
+                        .replace(/{{id}}/, item.id);
+
+                    return content;
+                }).join("");
+            })
+            .then((content) => {
+                document.querySelector("#items-to-buy").innerHTML = content;
+            });
+    }
+
+    function displayAccountBalances() {
+        return web3.eth.getAccounts()
+            .then(accounts => {
+                return Promise.all(
+                    accounts.map(account => web3.eth.getBalance(account).then(balance => {
+                        return {
+                            account, balance
+                        };
+                    })));
+            })
+            .then(accountBalances => {
+                let template = document.querySelector("#template-balances").innerHTML;
+
+                return accountBalances.map(accountBalance => {
+                    return template.replace(/{{account}}/, accountBalance.account).replace(/{{balance}}/, accountBalance.balance).replace(/{{class-name}}/, function(className){
+                        if(accountBalance.account.toLowerCase() === MY_ADDRESS.toLowerCase())
+                            return "text-danger";
+                        else
+                            return "text-primary";
+                    });
+                }).join("");
+            })
+            .then((balances) => {
+                document.querySelector("#account-balance").innerHTML = balances;
+            });
+    }
+
+    function wireUpBuyNow() {
+        document.querySelectorAll(".buy-btn").forEach(button => {
+            button.addEventListener("click", (event) => {
+                let itemId = Number(event.target.dataset.id);
+                let value = event.target.dataset.value;
+
+                app.buy(itemId, value)
+                    .then(refreshUI)
+                    .then(displayAccountBalances)
+                    .then(wireUpBuyNow)
+                    .catch(err => {
+                        console.error("are you serious?", err);
+                    });
+            });
+        });
     }
 
     window.onload = function () {
         app.initContract()
             .then(seed)
             .then(refreshUI)
-            // .then(() => app.getItemByIndex(2))
-            // .then(item => {
-            //     console.log("item id is ", item.id, "value is", item.value, "owner is", item.owner);
-            //     return item;
-            // })
-            //.then((item) => buy(item.id, item.value))
-            //.then(getContractBalance)
+            .then(displayAccountBalances)
+            .then(wireUpBuyNow)
             .catch(err => console.log(err))
     }
 

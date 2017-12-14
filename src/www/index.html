@@ -2,76 +2,56 @@
 <html lang="en">
 
 <head>
-    <title></title>
+    <title>Junk Yard</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Kuchh Bhi
-                    </div>
-                    <div class="card-body">
-                        This is some text within a card body.
-                        <br/>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
+            <img src="jylogo.gif" class="logo" alt="JunkYard">
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <ul class="list-group" id="items-to-buy"></ul>
             </div>
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Kuchh Bhi
-                    </div>
-                    <div class="card-body">
-                        This is some text within a card body.
-                        <br/>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Kuchh Bhi
-                    </div>
-                    <div class="card-body">
-                        This is some text within a card body.
-                        <br/>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Kuchh Bhi
-                    </div>
-                    <div class="card-body">
-                        This is some text within a card body.
-                        <br/>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
+            <div class="col-6">
+                <ul class="list-group" id="account-balance"></ul>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-        crossorigin="anonymous"></script>
-
     <script src="web3.min.js" type="text/javascript"></script>
     <script src="app.js" type="text/javascript"></script>
+
+    <script type="text/template" id="template-items">
+        <li class="list-group-item">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{title}}</h4>
+                    <h6 class="card-subtitle mb-2 text-primary">{{value}} Wei</h6>
+                    <span><strong>Owner:</strong> <i>{{owner}}</i></span>
+                    <button class="btn btn-success buy-btn" data-id="{{id}}" data-value="{{value}}">Buy Now</button>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <script type="text/template" id="template-balances">
+        <li class="list-group-item">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Account: {{account}}</h6>
+                    <h6 class="card-subtitle mb-2">Balance <span class="{{class-name}}">{{balance}} Wei</span></h6>
+                </div>
+            </div>
+        </li>
+    </script>
+
 </body>
 
 </html>
