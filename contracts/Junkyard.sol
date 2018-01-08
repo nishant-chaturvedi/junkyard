@@ -46,6 +46,5 @@ contract Junkyard {
 
     function getTotalItems() public constant returns (uint) {
         return totalItems;
-    }
-   
+    }   
 }
