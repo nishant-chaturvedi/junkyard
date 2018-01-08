@@ -3,7 +3,7 @@
     const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
     const JUNK_ITEMS = ["Acoustic Guitar", "Ashtray", "Baseball", "Baseball Glove", "Bent Tin Can*", "Bonesaw", "Butter Knife", "Camera", "Carton of Cigarettes (Used in Dead Money)", "Chessboard", "Cigarette", "Clipboard", "Coffee Mug", "Coffee Pot", "Conductor", "Counterfeit Bottle Caps", "Crutch", "Cue Ball", "Cup", "Damaged Garden Gnome", "Dinner Plate", "Dog Bowl", "Drinking Glass", "Earnings Clipboard", "Empty Nuka-Cola Bottle", "Empty Sunset Sarsaparilla Bottle", "Empty Whiskey Bottles", "Evil Gnome", "Finance Clipboard", "Firehose Nozzle", "Food Sanitizer", "Fork", "Glass Pitcher", "Green Plate", "Hammer", "Harmonica", "Hot Plate", "Intact Garden Gnome", "Iron", "Large Burned Book", "Large Destroyed Book", "Large Ruined Book", "Large Scorched Book", "Large Whiskey Bottle", "Lawn Mower Blade", "Leaf Blower", "Medical Clipboard", "Metal Cooking Pan", "Metal Cooking Pot", "Metal Spoon"];
 
-    const NETWORK_IDENTIFIER = "1514985935577";
+    const NETWORK_IDENTIFIER = "1515427019152";
     let junkYardOwner, myAddress, contractAddress;
 
     let app = {
@@ -122,7 +122,8 @@
                     let content = template.replace(/{{title}}/, item.title)
                         .replace(/{{value}}/g, item.value)
                         .replace(/{{owner}}/, item.owner)
-                        .replace(/{{id}}/, item.id);
+                        .replace(/{{id}}/, item.id)
+                        .replace(/{{isDisabled}}/, item.owner.toLowerCase() === myAddress.toLowerCase() ? "disabled" : "");
 
                     return content;
                 }).join("");
@@ -189,7 +190,7 @@
             sessionStorage.setItem("junkYard", JSON.stringify({
                 junkYardOwner
             }));
-            
+
             console.log("junkyard owner is", junkYardOwner);
             console.log("Your address is", myAddress);
 
