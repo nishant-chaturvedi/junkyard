@@ -7,7 +7,7 @@ follow these steps:
 1. install `node.js` and `npm` (tested with version 8.9.0)
 2. install `truffle` runnin `npm install -g truffle@4.0.1`
 3. install `ganache-cli` running `npm install -g ganache-cli@6.0.3`
-4. run `ganache-cli` in the command line, this will give you 10 sample accounts, public and private keys, copy those, these keys will be required in the later steps. Have this running, since this is the test ethereum network demo app is going to connect to.
+4. run `ganache-cli` in the command line, this will give you 10 sample accounts, public and private keys, copy *PUBLIC KEYS*, these keys will be required in the later steps. Have this running, since this is the test ethereum network demo app is going to connect to.
 5. navigate to root directory of the project
 6. run `npm install`.
 7. run `npm run build`.
