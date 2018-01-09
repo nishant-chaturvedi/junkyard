@@ -7,7 +7,7 @@ follow these steps:
 1. install `node.js` and `npm` (tested with version 8.9.0)
 2. install `truffle` runnin `npm install -g truffle@4.0.1`
 3. install `ganache-cli` running `npm install -g ganache-cli@6.0.3`
-4. run `ganache-cli` in the command line, this will give you a 10 sample accounts, public and private keys, copy those, these keys will be required in the later steps.
+4. run `ganache-cli` in the command line, this will give you 10 sample accounts, public and private keys, copy those, these keys will be required in the later steps.
 5. navigate to root directory of the project
 6. run `npm run build`
 7. if everything went well this far, then you will see a `build` directory, open `build/contracts/Junkyard.json` and copy the network id, for example if you have a section like shown below you need to copy `1515497640144`
