@@ -1,4 +1,4 @@
-## A demo application on Ethereum blockchain
+## A demo decentralized application on Ethereum blockchain
 
 ### How to run the demo
 
