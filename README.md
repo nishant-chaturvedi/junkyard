@@ -11,7 +11,8 @@ follow these steps:
 5. navigate to root directory of the project
 6. run `npm run build`
 7. if everything went well this far, then you will see a `build` directory, open `build/contracts/Junkyard.json` and copy the network id, for example if you have a section like shown below you need to copy `1515497640144`
-``` json "networks": {
+``` json 
+"networks": {
     "1515497640144": {
       "events": {},
       "links": {},
