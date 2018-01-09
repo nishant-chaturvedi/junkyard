@@ -18,7 +18,8 @@ follow these steps:
       "links": {},
       "address": "0x3219c9d5d5e11067b2624e5cba67a3016dd43f46"
     }
-  }```
+  }
+```
 
 8. replace the network id copied in the previous step in `src/www/app.js` line #6 `const NETWORK_IDENTIFIER = "1515427019152";`
 
